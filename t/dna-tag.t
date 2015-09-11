@@ -3,12 +3,14 @@ use strict;
 use warnings;
 use Test::More;
 
-use DNATag;
+use Bio::NGS::DNAIndexSet;
+
+sub new_set { Bio::NGS::DNAIndexSet->new(@_) }
 
 my ($ts, $fc);
 
-$ts = DNATag::Set->new(qw(AAAAAAAA-CCCCCCCC GGGGGGGG-TTTTTTTT));
-isa_ok($ts, 'DNATag::Set');
+$ts = new_set(qw(AAAAAAAA-CCCCCCCC GGGGGGGG-TTTTTTTT));
+isa_ok($ts, 'Bio::NGS::DNAIndexSet');
 ok($ts->all_dual, 'all dual');
 $fc = $ts->for_cycles(6);
 is($fc->[0], 'AAAAAA', 'for_cycles single recipe, dual indexes');
@@ -20,8 +22,8 @@ $fc = $ts->for_cycles(2,5);
 is($fc->[0], 'AA-CCCCC', 'for_cycles dual recipe, dual indexes shortened');
 is($fc->[1], 'GG-TTTTT', 'for_cycles dual recipe, dual indexes shortened');
 
-$ts = DNATag::Set->new(qw(AACAAAAC-AACAAAAC GTACTT));
-isa_ok($ts, 'DNATag::Set');
+$ts = new_set(qw(AACAAAAC-AACAAAAC GTACTT));
+isa_ok($ts, 'Bio::NGS::DNAIndexSet');
 ok(!$ts->all_dual, 'not all dual');
 ok(!$ts->all_single, 'not all single');
 is($ts->min_length, 6, 'min_length');
@@ -42,20 +44,21 @@ is($fc->[1], 'GTACTT', 'for_cycles single recipe, mixed indexes');
 
 my $t;
 
-$t = DNATag->new('ACGTCC');
-isa_ok($t, 'DNATag');
+$t = Bio::NGS::DNAIndex->new('ACGTCC');
+isa_ok($t, 'Bio::NGS::DNAIndex');
 is("$t", 'ACGTCC', 'stringifies');
 ok($t->is_single, 'single');
 ok(!$t->is_dual, 'not dual');
 
-$t = DNATag->new('AACAAAAC-AACAAAAC');
-isa_ok($t, 'DNATag');
+$t = Bio::NGS::DNAIndex->new('AACAAAAC-AACAAAAC');
+isa_ok($t, 'Bio::NGS::DNAIndex');
 is("$t", 'AACAAAAC-AACAAAAC', 'stringifies');
 ok(!$t->is_single, 'not single');
 ok($t->is_dual, 'dual');
+# TODO: make this work without ""?
 is(substr("$t", 0, 6), 'AACAAA', 'substr works');
 
-$ts = DNATag::Set->new(qw(
+$ts = new_set(qw(
     AACAAAAC-AACAAAAC
     AGATAGTT-AGATAGTT
     CTATACTT-CTATACTT
@@ -77,15 +80,15 @@ $ts = DNATag::Set->new(qw(
     ATTCAGAA-ATTCAGAA
     AACCCCTT-AACCCCTT
 ));
-isa_ok($ts, 'DNATag::Set');
+isa_ok($ts, 'Bio::NGS::DNAIndexSet');
 
 ok($ts->all_dual, 'all dual');
 ok(!$ts->all_single, 'not all single');
 is($ts->min_length, 16, 'min_length');
 is($ts->max_length, 16, 'max_length');
 
-$ts = DNATag::Set->new(qw(AACAAA GTACTT));
-isa_ok($ts, 'DNATag::Set');
+$ts = new_set(qw(AACAAA GTACTT));
+isa_ok($ts, 'Bio::NGS::DNAIndexSet');
 
 ok(!$ts->all_dual, 'not all dual');
 ok($ts->all_single, 'all single');

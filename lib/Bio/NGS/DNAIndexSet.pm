@@ -1,5 +1,5 @@
 
-package DNATag;
+package Bio::NGS::DNAIndex;
 
 use strict;
 use warnings;
@@ -12,7 +12,7 @@ use overload (
 
 sub new {
     my $class = shift;
-    my $seq = shift or die 'need tag';
+    my $seq = shift or die 'need index sequence';
     (@_ == 0) or die 'too many';
     bless \$seq, $class;
 }
@@ -37,7 +37,7 @@ sub seq_i2 {
     return [split('-', ${$self})]->[1];
 }
 
-package DNATag::Set;
+package Bio::NGS::DNAIndexSet;
 
 use strict;
 use warnings;
@@ -52,7 +52,7 @@ use overload (
 sub new {
     my $class = shift;
     (@_ > 0) or die 'need some seqs';
-    bless {seq => [map { DNATag->new("$_") } @_]}, ref $class || $class;
+    bless {seq => [map { Bio::NGS::DNAIndex->new("$_") } @_]}, ref $class || $class;
 }
 
 sub all_dual   { List::AllUtils::all { $_->is_dual }    @{$_[0]}  }
