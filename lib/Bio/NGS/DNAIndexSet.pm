@@ -77,7 +77,10 @@ sub _for_cycles_dual {
     my $self = shift;
     my $len1 = List::AllUtils::min( $self->min_length_i1, shift );
     my $len2 = List::AllUtils::min( $self->min_length_i2, shift );
-    return $self->new( map { substr($_->seq_i1, 0, $len1) . '-' . substr($_->seq_i2, 0, $len2) } @$self );
+    if ($len2) {
+        return $self->new( map { substr($_->seq_i1, 0, $len1) . '-' . substr($_->seq_i2, 0, $len2) } @$self );
+    }
+    return $self->new( map { substr($_->seq_i1, 0, $len1) } @$self );
 }
 
 1;
